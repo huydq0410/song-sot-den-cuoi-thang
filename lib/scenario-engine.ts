@@ -43,7 +43,7 @@ type BuildContext = {
   profileId: ProfileId;
   random: Random;
   subject: Subject;
-  variantLine: string;
+  contextLine: string;
 };
 
 type ScenarioFamily = {
@@ -123,56 +123,186 @@ function createChoice(
   return { label, hint, effects, result };
 }
 
-function createVariantLine(random: Random) {
-  const hour = 7 + Math.floor(random() * 15);
-  const minute = Math.floor(random() * 60);
-  const second = Math.floor(random() * 60);
-  const moments = [
-    "giữa một ngày khá bận",
-    "ngay trước lúc bạn định nghỉ",
-    "sau khi kế hoạch trong ngày vừa ổn định",
-    "khi bạn đang rà lại ngân sách",
-    "vào một khoảng trống hiếm hoi",
-    "sau một buổi làm việc dài",
-    "đúng lúc bạn nghĩ hôm nay sẽ yên",
-    "khi tuần mới vừa vào guồng",
-  ];
-  const triggers = [
-    "một thông báo thứ hai xuất hiện",
-    "điện thoại rung với lời nhắc mới",
-    "bạn vừa kiểm tra lại số dư",
-    "một cuộc gọi ngắn làm kế hoạch đổi hướng",
-    "hạn xử lý bất ngờ được rút ngắn",
-    "một người quen gửi thêm thông tin",
-    "bạn phát hiện một chi tiết đã bỏ sót",
-    "lịch cá nhân vừa có thay đổi",
-  ];
-  const channels = [
-    "qua một tin nhắn ngắn",
-    "sau một cuộc gọi bất ngờ",
-    "trong email vừa nhận",
-    "từ lời nhắc trên lịch",
-    "qua thông báo trên điện thoại",
-    "từ ghi chú bạn từng đặt",
-    "sau một cuộc trò chuyện trực tiếp",
-    "trên một tờ thông báo mới",
-  ];
-  const deadlines = [
-    "và cần quyết định trước cuối ngày",
-    "và chỉ còn 24 giờ để phản hồi",
-    "và cần chốt trước sáng mai",
-    "và không thể để qua cuối tuần",
-    "và phương án tốt nhất sắp hết hạn",
-    "và bạn phải trả lời trong buổi chiều",
-    "và lịch xử lý vừa được đẩy sớm",
-    "và hôm nay là mốc cuối để chọn",
-  ];
-  const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
-  return `Lúc ${time}, ${pickForVariant(moments, random)}, ${pickForVariant(triggers, random)} ${pickForVariant(channels, random)} ${pickForVariant(deadlines, random)}.`;
+function randomInt(random: Random, min: number, max: number) {
+  return min + Math.floor(random() * (max - min + 1));
 }
 
-function pickForVariant(items: readonly string[], random: Random) {
+function pickCopy(items: readonly string[], random: Random) {
   return items[Math.floor(random() * items.length)];
+}
+
+function formatDuration(totalMinutes: number) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return minutes === 0 ? `${hours} giờ` : `${hours} giờ ${minutes} phút`;
+}
+
+function createContextLine(
+  familyId: string,
+  subject: Subject,
+  random: Random,
+) {
+  switch (familyId) {
+    case "essential": {
+      const overBudget = randomInt(random, 7, 34);
+      const planningDays = randomInt(random, 3, 18);
+      const bufferDays = randomInt(random, 2, 21);
+      return pickCopy(
+        [
+          `Khoản này cao hơn dự tính ${overBudget}%, trong khi phần tiền đệm còn phải đủ cho ${bufferDays} ngày.`,
+          `Con số thực tế cao hơn dự toán ${overBudget}%, dù bạn đã ghi khoản này vào kế hoạch từ ${planningDays} ngày trước.`,
+          `Khoản chi xuất hiện sớm hơn kế hoạch ${planningDays} ngày và thu hẹp phần tiền đệm xuống còn ${bufferDays} ngày.`,
+        ],
+        random,
+      );
+    }
+    case "health": {
+      const symptomDays = randomInt(random, 2, 8);
+      const lostMinutes = randomInt(random, 18, 95);
+      return pickCopy(
+        [
+          `Tình trạng đã kéo dài ${symptomDays} ngày và làm bạn mất khoảng ${lostMinutes} phút tập trung mỗi ngày.`,
+          `Sau ${symptomDays} ngày tự theo dõi, bạn thấy sức khỏe đang ảnh hưởng rõ đến công việc và giấc ngủ.`,
+          `Bạn đã điều chỉnh sinh hoạt trong ${symptomDays} ngày, nhưng mỗi ngày vẫn có khoảng ${lostMinutes} phút làm việc bị gián đoạn.`,
+        ],
+        random,
+      );
+    }
+    case "mobility": {
+      const recentDays = randomInt(random, 3, 12);
+      const occurrences = randomInt(random, 2, 7);
+      const distance = randomInt(random, 5, 24);
+      if (subject.name.includes("xe buýt")) {
+        const busTrips = randomInt(random, 6, 28);
+        return `Trong ${recentDays} ngày gần nhất, bạn đã đi ${busTrips} lượt trên tuyến dài khoảng ${distance} km.`;
+      }
+      if (subject.name.includes("đường chính")) {
+        const delayMinutes = randomInt(random, 12, 68);
+        return `Đoạn đường sửa chữa dài khoảng ${distance} km và đã làm bạn chậm thêm ${delayMinutes} phút mỗi ngày trong ${recentDays} ngày qua.`;
+      }
+      return pickCopy(
+        [
+          `Trong ${recentDays} ngày gần đây, dấu hiệu này đã lặp lại ${occurrences} lần trên quãng đường khoảng ${distance} km mỗi ngày.`,
+          `Bạn phải di chuyển khoảng ${distance} km mỗi ngày, còn sự cố đã xuất hiện ${occurrences} lần chỉ trong ${recentDays} ngày.`,
+          `Trên quãng đường khoảng ${distance} km mỗi ngày, dấu hiệu này đã xuất hiện ${occurrences} lần trong ${recentDays} ngày.`,
+        ],
+        random,
+      );
+    }
+    case "relationships": {
+      const responseDays = randomInt(random, 1, 24);
+      const reminders = randomInt(random, 1, 8);
+      const remainingDays = randomInt(random, 7, 29);
+      return pickCopy(
+        [
+          `Bạn có khoảng ${Math.min(responseDays, remainingDays)} ngày để cân nhắc, trong khi tháng vẫn còn ${remainingDays} ngày phải giữ ngân sách.`,
+          `Câu chuyện đã được nhắc lại ${reminders} lần và bạn cần đưa ra câu trả lời trong ${responseDays} ngày tới.`,
+          `Bạn muốn giúp trong khả năng của mình, nhưng vẫn phải giữ ngân sách cho ${remainingDays} ngày còn lại.`,
+        ],
+        random,
+      );
+    }
+    case "growth": {
+      const weeks = randomInt(random, 3, 16);
+      const weeklyMinutes = randomInt(random, 4, 16) * 30;
+      return pickCopy(
+        [
+          `Để khoản đầu tư này có ích, bạn cần dành khoảng ${formatDuration(weeklyMinutes)} mỗi tuần trong ${weeks} tuần.`,
+          `Bạn ước tính lịch học kéo dài ${weeks} tuần, với khoảng ${formatDuration(weeklyMinutes)} mỗi tuần.`,
+          `Nội dung phù hợp mục tiêu hiện tại, nhưng đòi hỏi cam kết đều đặn trong suốt ${weeks} tuần.`,
+        ],
+        random,
+      );
+    }
+    case "daily": {
+      const recentDays = randomInt(random, 7, 21);
+      const occurrences = randomInt(random, 4, Math.max(5, recentDays - 1));
+      if (subject.name.includes("đăng ký")) {
+        const reviewWeeks = randomInt(random, 3, 9);
+        const inactiveDays = randomInt(random, 12, 95);
+        const recentCharges = randomInt(random, 2, 8);
+        return `Khi xem lại ${reviewWeeks} tuần và ${recentCharges} lần trừ tiền gần nhất, bạn thấy hai dịch vụ đã không được mở trong ${inactiveDays} ngày.`;
+      }
+      if (subject.name.includes("nhu yếu phẩm")) {
+        const receipts = randomInt(random, 3, 9);
+        const convenienceShare = randomInt(random, 18, 42);
+        const convenienceItems = randomInt(random, 2, 11);
+        return `Khi xem lại ${receipts} hóa đơn gần nhất, bạn thấy ${convenienceItems} món tiện lợi chiếm khoảng ${convenienceShare}% tổng tiền.`;
+      }
+      if (subject.name.includes("cà phê")) {
+        const coffeeVisits = randomInt(
+          random,
+          Math.max(3, Math.ceil(recentDays * 0.45)),
+          Math.max(4, Math.ceil(recentDays * 0.9)),
+        );
+        return `Trong ${recentDays} ngày gần nhất, bạn đã ghé quán ${coffeeVisits} lần — nhiều hơn chính mình nghĩ.`;
+      }
+      const lateMeals = randomInt(
+        random,
+        1,
+        Math.max(1, Math.min(occurrences, 6)),
+      );
+      return `Bạn ghi lại ${recentDays} ngày gần nhất và thấy mình mua đồ ăn bên ngoài ${occurrences} lần, trong đó có ${lateMeals} bữa khá muộn.`;
+    }
+    case "work": {
+      if (subject.name.includes("dự án")) {
+        const projectDays = randomInt(random, 6, 24);
+        const eveningMinutes = randomInt(random, 3, 10) * 30;
+        return `Dự án kéo dài ${projectDays} ngày và cần thêm khoảng ${formatDuration(eveningMinutes)} làm việc vào mỗi tối.`;
+      }
+      const recentDays = randomInt(random, 4, 18);
+      const lostMinutes = randomInt(random, 12, 82);
+      return pickCopy(
+        [
+          `Trong ${recentDays} ngày gần đây, vấn đề này làm bạn mất khoảng ${lostMinutes} phút làm việc mỗi ngày.`,
+          `Bạn đã theo dõi trong ${recentDays} ngày và nhận ra thời gian chờ đang cộng thêm khoảng ${lostMinutes} phút mỗi ngày.`,
+          `Trong ${recentDays} ngày theo dõi, hiệu suất giảm thấy rõ: mỗi ngày bạn mất thêm khoảng ${lostMinutes} phút vì gián đoạn.`,
+        ],
+        random,
+      );
+    }
+    case "temptation": {
+      const decisionHours = randomInt(random, 6, 48);
+      if (subject.name.includes("đầu tư")) {
+        const unansweredQuestions = randomInt(random, 2, 9);
+        const missingDocuments = randomInt(random, 1, 6);
+        return `Lời mời yêu cầu quyết định trong ${decisionHours} giờ, nhưng còn ${unansweredQuestions} câu hỏi chưa được giải đáp và ${missingDocuments} tài liệu rủi ro chưa được cung cấp.`;
+      }
+      if (subject.name.includes("chuyến đi")) {
+        const groupSize = randomInt(random, 3, 14);
+        return `Nhóm ${groupSize} người cần chốt lịch trong ${decisionHours} giờ, còn bạn phải cân đối lại khoản chi ngoài kế hoạch.`;
+      }
+      const discount = randomInt(random, 12, 45);
+      return `Mức giá đang giảm ${discount}% và ưu đãi sẽ kết thúc sau ${decisionHours} giờ.`;
+    }
+    case "recovery": {
+      const consecutiveDays = randomInt(random, 5, 13);
+      const sleepMinutes = randomInt(random, 51, 90) * 5;
+      return pickCopy(
+        [
+          `Bạn đã làm việc ${consecutiveDays} ngày liên tiếp và chỉ ngủ trung bình ${formatDuration(sleepMinutes)} mỗi đêm.`,
+          `Sau ${consecutiveDays} ngày gần như không có khoảng nghỉ, bạn thấy cả khả năng tập trung lẫn tâm trạng đều đi xuống.`,
+          `Lịch tuần này có ${consecutiveDays} ngày bận liên tiếp, còn thời gian ngủ trung bình chỉ khoảng ${formatDuration(sleepMinutes)}.`,
+        ],
+        random,
+      );
+    }
+    case "windfall": {
+      const waitingDays = randomInt(random, 2, 45);
+      const surprisePercent = randomInt(random, 8, 36);
+      const statusChecks = randomInt(random, 1, 14);
+      return pickCopy(
+        [
+          `Khoản tiền được xác nhận sau ${waitingDays} ngày chờ và ${statusChecks} lần kiểm tra trạng thái.`,
+          `Sau ${waitingDays} ngày chờ, số tiền thực nhận cao hơn bạn nhớ khoảng ${surprisePercent}% nên chưa có chỗ trong kế hoạch.`,
+          `Sau ${waitingDays} ngày không có cập nhật, khoản tiền bất ngờ xuất hiện trong tài khoản.`,
+        ],
+        random,
+      );
+    }
+    default:
+      return "Bạn cần cân nhắc tác động của quyết định này lên phần còn lại của tháng.";
+  }
 }
 
 const families: ScenarioFamily[] = [
@@ -206,13 +336,13 @@ const families: ScenarioFamily[] = [
         amount: 950_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const firstPayment = percent(amount, 0.45);
       const debt = roundMoney(amount - firstPayment + amount * 0.08);
       return {
         title: `Đến hạn: ${subject.name}`,
-        description: `${subject.context} ${variantLine} Tổng số tiền lần này là ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Tổng số tiền lần này là ${money(amount)}.`,
         choices: [
           createChoice(
             "Thanh toán đầy đủ",
@@ -266,12 +396,12 @@ const families: ScenarioFamily[] = [
         amount: 1_050_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const basic = percent(amount, 0.42);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Phương án điều trị đầy đủ dự kiến ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Phương án điều trị đầy đủ dự kiến ${money(amount)}.`,
         choices: [
           createChoice(
             "Xử lý đầy đủ ngay",
@@ -325,12 +455,12 @@ const families: ScenarioFamily[] = [
         amount: 1_350_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const alternative = percent(amount, 0.28);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Cách xử lý triệt để tốn khoảng ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Cách xử lý triệt để tốn khoảng ${money(amount)}.`,
         choices: [
           createChoice(
             "Giải quyết triệt để",
@@ -384,12 +514,12 @@ const families: ScenarioFamily[] = [
         amount: 1_250_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const moderate = percent(amount, 0.38);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Nếu tham gia trọn vẹn, bạn sẽ chi khoảng ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Nếu tham gia trọn vẹn, bạn sẽ chi khoảng ${money(amount)}.`,
         choices: [
           createChoice(
             "Tham gia và hỗ trợ trọn vẹn",
@@ -443,12 +573,12 @@ const families: ScenarioFamily[] = [
         amount: 1_500_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const selfStudy = percent(amount, 0.12);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Chi phí đầy đủ là ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Chi phí đầy đủ là ${money(amount)}.`,
         choices: [
           createChoice(
             "Đăng ký phương án đầy đủ",
@@ -502,13 +632,13 @@ const families: ScenarioFamily[] = [
         amount: 1_200_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const lean = percent(amount, 0.36);
       const transfer = percent(amount, 0.22);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Nếu giữ nguyên thói quen, khoản chi khoảng ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Nếu giữ nguyên thói quen, khoản chi khoảng ${money(amount)}.`,
         choices: [
           createChoice(
             "Giữ nguyên cho tiện",
@@ -562,7 +692,7 @@ const families: ScenarioFamily[] = [
         amount: 2_800_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const workaround = percent(amount, 0.16);
       const income = roundMoney(amount * (0.7 + random() * 0.45));
@@ -570,8 +700,8 @@ const families: ScenarioFamily[] = [
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
         description: isProject
-          ? `${subject.context} ${variantLine} Khoản thu thêm có thể đạt ${money(income)}.`
-          : `${subject.context} ${variantLine} Phương án nâng cấp phù hợp tốn khoảng ${money(amount)}.`,
+          ? `${subject.context} ${contextLine} Khoản thu thêm có thể đạt ${money(income)}.`
+          : `${subject.context} ${contextLine} Phương án nâng cấp phù hợp tốn khoảng ${money(amount)}.`,
         choices: isProject
           ? [
               createChoice(
@@ -646,13 +776,13 @@ const families: ScenarioFamily[] = [
         amount: 2_100_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const smallTry = percent(amount, 0.32);
       const transfer = percent(amount, 0.18);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Giá để tham gia trọn vẹn là ${money(amount)}.`,
+        description: `${subject.context} ${contextLine} Giá để tham gia trọn vẹn là ${money(amount)}.`,
         choices: [
           createChoice(
             "Xuống tiền trọn vẹn",
@@ -706,13 +836,18 @@ const families: ScenarioFamily[] = [
         amount: 1_100_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const simple = percent(amount, 0.2);
       const extraIncome = roundMoney(amount * (0.85 + random() * 0.5));
+      const description = subject.name.includes("làm thêm")
+        ? `${subject.context} ${contextLine} Nếu nhận việc, bạn có thể kiếm khoảng ${money(extraIncome)}.`
+        : subject.name.includes("dọn lại")
+          ? `${subject.context} ${contextLine} Thuê người hỗ trợ dự kiến tốn khoảng ${money(amount)}.`
+          : `${subject.context} ${contextLine} Một ngày nghỉ theo kế hoạch sẽ tốn khoảng ${money(amount)}.`;
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Một ngày thoải mái theo kế hoạch sẽ tốn khoảng ${money(amount)}.`,
+        description,
         choices: [
           createChoice(
             "Tận hưởng trọn vẹn",
@@ -766,12 +901,12 @@ const families: ScenarioFamily[] = [
         amount: 950_000,
       },
     ],
-    build: ({ profileId, random, subject, variantLine }) => {
+    build: ({ profileId, random, subject, contextLine }) => {
       const amount = scaledAmount(subject.amount, profileId, random);
       const half = percent(amount, 0.5);
       return {
         title: subject.name.charAt(0).toUpperCase() + subject.name.slice(1),
-        description: `${subject.context} ${variantLine} Bạn vừa có thêm ${money(amount)} ngoài kế hoạch.`,
+        description: `${subject.context} ${contextLine} Bạn vừa có thêm ${money(amount)} ngoài kế hoạch.`,
         choices: [
           createChoice(
             "Đưa hết vào quỹ dự phòng",
@@ -834,7 +969,7 @@ export function generateScenarioDeck(profileId: ProfileId, seed: string) {
       profileId,
       random,
       subject,
-      variantLine: createVariantLine(random),
+      contextLine: createContextLine(family.id, subject, random),
     });
 
     return {
