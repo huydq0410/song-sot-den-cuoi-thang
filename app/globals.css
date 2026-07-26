@@ -426,6 +426,13 @@ a:focus-visible {
   font-size: 16px;
 }
 
+.profile-avatar.tiny {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 8px;
+  font-size: 12px;
+}
+
 .profile-accent {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
@@ -1256,6 +1263,129 @@ a:focus-visible {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   transform: rotate(-4deg);
+}
+
+.cloud-score {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px dashed var(--line);
+  border-radius: 16px 16px 16px 4px;
+  background: rgba(169, 184, 157, 0.18);
+  text-align: left;
+}
+
+.cloud-score-copy h2 {
+  margin: 6px 0 7px;
+  font-family: Georgia, serif;
+  font-size: 22px;
+  letter-spacing: -0.035em;
+}
+
+.cloud-score-copy p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.cloud-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 16px;
+  padding: 0 15px;
+  border: 1px solid var(--ink);
+  border-radius: 10px 10px 10px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ink);
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.cloud-button:disabled {
+  cursor: default;
+  opacity: 0.76;
+}
+
+.cloud-button span {
+  color: var(--mustard);
+  font-size: 18px;
+}
+
+.cloud-message {
+  margin: 10px 0 0;
+  font-size: 10px;
+}
+
+.cloud-message.error {
+  color: #a43f2c;
+}
+
+.leaderboard {
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.leaderboard-heading,
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 26px 32px 1fr auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.leaderboard-heading {
+  grid-template-columns: 1fr auto;
+  padding: 10px 13px;
+  background: var(--ink);
+  color: white;
+  font-size: 9px;
+}
+
+.leaderboard-heading span {
+  color: var(--mustard);
+}
+
+.leaderboard-row {
+  padding: 9px 13px;
+  border-top: 1px solid var(--line);
+}
+
+.leaderboard-row:first-of-type {
+  border-top: 0;
+}
+
+.rank {
+  color: var(--orange);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.leaderboard-name strong,
+.leaderboard-name small {
+  display: block;
+}
+
+.leaderboard-name strong {
+  font-size: 11px;
+}
+
+.leaderboard-name small {
+  margin-top: 1px;
+  color: var(--ink-soft);
+  font-size: 8px;
+}
+
+.leaderboard-score {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
 }
 
 .result-actions {

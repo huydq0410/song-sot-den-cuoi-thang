@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getSupabaseBrowserClient } from "../lib/supabase";
 
 type StatKey = "cash" | "savings" | "debt" | "health" | "morale";
 
@@ -48,6 +49,13 @@ type GameState = {
 type LastResult = {
   result: string;
   effects: Effects;
+};
+
+type LeaderboardEntry = {
+  id: number;
+  profile_id: string;
+  score: number;
+  created_at: string;
 };
 
 const STORAGE_KEY = "song-sot-cuoi-thang-v1";
@@ -854,6 +862,10 @@ export default function Home() {
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
   const [savedGame, setSavedGame] = useState<GameState | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [cloudStatus, setCloudStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
     const loadSavedGame = window.setTimeout(() => {
@@ -935,11 +947,51 @@ export default function Home() {
     setLastResult(null);
   }
 
+  async function saveScore() {
+    if (!game || cloudStatus === "saving" || cloudStatus === "saved") return;
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setCloudStatus("error");
+      return;
+    }
+
+    setCloudStatus("saving");
+    const score = getScore(game);
+    const netWorth = game.cash + game.savings - game.debt;
+    const { error } = await supabase.from("game_scores").insert({
+      profile_id: game.profileId,
+      score,
+      net_worth: netWorth,
+      savings: game.savings,
+      debt: game.debt,
+      health: Math.round(game.health),
+      morale: Math.round(game.morale),
+    });
+
+    if (error) {
+      setCloudStatus("error");
+      return;
+    }
+
+    const { data } = await supabase
+      .from("game_scores")
+      .select("id, profile_id, score, created_at")
+      .order("score", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(5);
+
+    setLeaderboard((data ?? []) as LeaderboardEntry[]);
+    setCloudStatus("saved");
+  }
+
   function restart() {
     window.localStorage.removeItem(STORAGE_KEY);
     setSavedGame(null);
     setGame(null);
     setLastResult(null);
+    setCloudStatus("idle");
+    setLeaderboard([]);
     setScreen("intro");
   }
 
@@ -1134,6 +1186,64 @@ export default function Home() {
           </div>
 
           <div className="ending-stamp">{ending.stamp}</div>
+
+          <div className="cloud-score">
+            <div className="cloud-score-copy">
+              <span className="section-label">Bảng điểm cộng đồng</span>
+              <h2>Đưa kết quả này lên Supabase?</h2>
+              <p>
+                Chỉ nhân vật và các chỉ số cuối tháng được gửi đi. Tiến trình từng
+                ngày vẫn nằm trên thiết bị của bạn.
+              </p>
+            </div>
+            <button
+              className="cloud-button"
+              type="button"
+              onClick={saveScore}
+              disabled={cloudStatus === "saving" || cloudStatus === "saved"}
+            >
+              {cloudStatus === "saving"
+                ? "Đang lưu…"
+                : cloudStatus === "saved"
+                  ? "Đã lưu điểm"
+                  : "Lưu điểm lên bảng xếp hạng"}
+              <span aria-hidden="true">{cloudStatus === "saved" ? "✓" : "↗"}</span>
+            </button>
+            {cloudStatus === "error" && (
+              <p className="cloud-message error" role="alert">
+                Chưa thể kết nối bảng điểm. Kết quả trên thiết bị vẫn an toàn.
+              </p>
+            )}
+
+            {leaderboard.length > 0 && (
+              <div className="leaderboard">
+                <div className="leaderboard-heading">
+                  <strong>Top 5 tháng này</strong>
+                  <span>Điểm</span>
+                </div>
+                {leaderboard.map((entry, index) => {
+                  const profile = profiles.find(
+                    (item) => item.id === entry.profile_id,
+                  );
+                  return (
+                    <div className="leaderboard-row" key={entry.id}>
+                      <span className="rank">{index + 1}</span>
+                      <span className={`profile-avatar tiny ${entry.profile_id}`}>
+                        {profile?.name.slice(0, 1) ?? "?"}
+                      </span>
+                      <span className="leaderboard-name">
+                        <strong>{profile?.name ?? "Người chơi"}</strong>
+                        <small>{profile?.role ?? "Nhân vật"}</small>
+                      </span>
+                      <strong className="leaderboard-score">
+                        {entry.score.toLocaleString("vi-VN")}
+                      </strong>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           <div className="result-actions">
             <button className="primary-button" type="button" onClick={restart}>
