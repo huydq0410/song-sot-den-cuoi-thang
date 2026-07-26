@@ -109,7 +109,7 @@ a:focus-visible {
   align-items: center;
   gap: 13px;
   color: var(--ink);
-  font-size: 19px;
+  font-size: 21px;
   font-weight: 850;
   letter-spacing: -0.04em;
   text-decoration: none;
@@ -127,7 +127,7 @@ a:focus-visible {
   gap: 9px;
   color: var(--ink-soft);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 650;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -162,7 +162,7 @@ a:focus-visible {
   margin-bottom: 22px;
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -179,7 +179,7 @@ a:focus-visible {
   margin: 0;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(58px, 6vw, 96px);
+  font-size: clamp(60px, 6vw, 98px);
   font-weight: 700;
   letter-spacing: -0.065em;
   line-height: 0.94;
@@ -194,7 +194,7 @@ a:focus-visible {
   max-width: 590px;
   margin: 30px 0 0;
   color: var(--ink-soft);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.65;
 }
 
@@ -235,7 +235,7 @@ a:focus-visible {
 }
 
 .primary-button span {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .text-button {
@@ -245,7 +245,7 @@ a:focus-visible {
   background: transparent;
   color: var(--ink);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 720;
 }
 
@@ -270,7 +270,7 @@ a:focus-visible {
   place-items: center;
   background: var(--sage);
   color: var(--ink);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 850;
 }
 
@@ -286,7 +286,7 @@ a:focus-visible {
 .micro-proof p {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.45;
 }
 
@@ -337,7 +337,7 @@ a:focus-visible {
 .section-label {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -346,7 +346,7 @@ a:focus-visible {
 .setup-card h2 {
   margin: 7px 0 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 30px;
+  font-size: 32px;
   letter-spacing: -0.035em;
 }
 
@@ -374,7 +374,7 @@ a:focus-visible {
   background: transparent;
   color: var(--ink-soft);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -408,7 +408,7 @@ a:focus-visible {
   background: var(--mustard);
   color: var(--ink);
   font-family: Georgia, serif;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
 }
 
@@ -423,20 +423,20 @@ a:focus-visible {
 .profile-avatar.small {
   width: 38px;
   height: 38px;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .profile-avatar.tiny {
   width: 30px;
   height: 30px;
   border-radius: 50% 50% 50% 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .profile-accent {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -444,14 +444,14 @@ a:focus-visible {
 
 .profile-card h3 {
   margin: 3px 0 0;
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: -0.025em;
 }
 
 .profile-card > p {
   margin: 15px 0 20px;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.55;
 }
 
@@ -475,12 +475,12 @@ a:focus-visible {
 .starting-numbers span {
   margin-bottom: 5px;
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .starting-numbers strong {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: -0.04em;
 }
 
@@ -497,7 +497,7 @@ a:focus-visible {
   justify-content: space-between;
   margin-bottom: 7px;
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .stat-bar-label strong {
@@ -541,7 +541,7 @@ a:focus-visible {
 .promise-number {
   color: var(--mustard);
   font-family: Georgia, serif;
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 800;
   line-height: 1;
 }
@@ -550,19 +550,19 @@ a:focus-visible {
   flex: 1;
   margin: 0;
   color: rgba(255, 255, 255, 0.64);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
 .game-promise strong {
   display: block;
   color: white;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .promise-mark {
   color: var(--mustard);
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .intro-footer {
@@ -573,7 +573,7 @@ a:focus-visible {
   justify-content: space-between;
   color: var(--ink-soft);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.03em;
 }
 
@@ -603,7 +603,7 @@ a:focus-visible {
 .day-counter span {
   color: var(--ink-soft);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -612,12 +612,12 @@ a:focus-visible {
 .day-counter strong {
   margin-top: 3px;
   font-family: Georgia, serif;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .day-counter i {
   color: var(--sage);
-  font-size: 13px;
+  font-size: 15px;
   font-style: normal;
   font-weight: 500;
 }
@@ -635,12 +635,12 @@ a:focus-visible {
 
 .player-chip small {
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .player-chip strong {
   margin-top: 1px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .month-progress {
@@ -677,7 +677,7 @@ a:focus-visible {
   justify-content: space-between;
   color: var(--ink-soft);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -703,20 +703,20 @@ a:focus-visible {
 
 .balance-block > span {
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .balance-block > strong {
   margin-top: 7px;
   font-family: Georgia, serif;
-  font-size: clamp(28px, 3vw, 42px);
+  font-size: clamp(30px, 3vw, 44px);
   letter-spacing: -0.045em;
 }
 
 .balance-block > small {
   margin-top: 8px;
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .balance-block b {
@@ -755,14 +755,14 @@ a:focus-visible {
 }
 
 .money-card span {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .money-card strong {
   overflow: hidden;
   margin-top: 6px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: -0.05em;
   text-overflow: ellipsis;
 }
@@ -770,7 +770,7 @@ a:focus-visible {
 .money-card small {
   margin-top: 7px;
   color: var(--ink-soft);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .wellbeing-card {
@@ -795,13 +795,13 @@ a:focus-visible {
 
 .tip-card > span {
   color: var(--mustard);
-  font-size: 17px;
+  font-size: 19px;
 }
 
 .tip-card p {
   margin: 0;
   color: rgba(255, 255, 255, 0.65);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.5;
 }
 
@@ -809,7 +809,7 @@ a:focus-visible {
   display: block;
   margin-bottom: 2px;
   color: white;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .event-stage {
@@ -826,7 +826,7 @@ a:focus-visible {
 .event-number,
 .event-eyebrow {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -888,14 +888,14 @@ a:focus-visible {
   color: white;
   box-shadow: 4px 4px 0 var(--mustard);
   font-family: Georgia, serif;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 800;
 }
 
 .event-card-heading span {
   color: var(--ink-soft);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -903,7 +903,7 @@ a:focus-visible {
 .event-card-heading h1 {
   margin: 4px 0 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(30px, 4vw, 48px);
+  font-size: clamp(32px, 4vw, 50px);
   letter-spacing: -0.045em;
   line-height: 1;
 }
@@ -912,7 +912,7 @@ a:focus-visible {
   max-width: 650px;
   margin: 28px 0 33px;
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.7;
 }
 
@@ -924,7 +924,7 @@ a:focus-visible {
 .choice-label {
   margin-bottom: 1px;
   color: var(--ink);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -962,7 +962,7 @@ a:focus-visible {
   place-items: center;
   background: var(--sage-light);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -972,13 +972,13 @@ a:focus-visible {
 }
 
 .choice-copy strong {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .choice-copy small {
   margin-top: 4px;
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .effect-pills {
@@ -992,7 +992,7 @@ a:focus-visible {
   padding: 5px 7px;
   border-radius: 5px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 750;
   white-space: nowrap;
 }
@@ -1009,7 +1009,7 @@ a:focus-visible {
 
 .choice-arrow {
   color: var(--orange);
-  font-size: 20px;
+  font-size: 22px;
   transition: transform 150ms ease;
 }
 
@@ -1028,7 +1028,7 @@ a:focus-visible {
 .outcome-label {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1037,14 +1037,14 @@ a:focus-visible {
 .outcome h2 {
   margin: 9px 0 8px;
   font-family: Georgia, serif;
-  font-size: 27px;
+  font-size: 29px;
   letter-spacing: -0.035em;
 }
 
 .outcome > p {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
@@ -1063,7 +1063,7 @@ a:focus-visible {
   align-items: center;
   justify-content: space-between;
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .event-footer > span {
@@ -1082,7 +1082,7 @@ a:focus-visible {
   background: var(--cream-light);
   color: var(--ink);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 10px;
   font-style: normal;
 }
 
@@ -1136,7 +1136,7 @@ a:focus-visible {
 .result-kicker {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -1161,7 +1161,7 @@ a:focus-visible {
 
 .result-day-stamp span {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 8px;
+  font-size: 10px;
   text-transform: uppercase;
 }
 
@@ -1169,13 +1169,13 @@ a:focus-visible {
   margin-top: 3px;
   color: var(--orange);
   font-family: Georgia, serif;
-  font-size: 34px;
+  font-size: 36px;
 }
 
 .result-paper h1 {
   margin: 0;
   font-family: Georgia, serif;
-  font-size: clamp(40px, 7vw, 66px);
+  font-size: clamp(42px, 7vw, 68px);
   letter-spacing: -0.055em;
   line-height: 1;
 }
@@ -1184,7 +1184,7 @@ a:focus-visible {
   max-width: 500px;
   margin: 18px auto 28px;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -1206,19 +1206,19 @@ a:focus-visible {
 .score-display span {
   color: var(--mustard);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 9px;
+  font-size: 11px;
   text-transform: uppercase;
 }
 
 .score-display strong {
   margin-top: 4px;
   font-family: Georgia, serif;
-  font-size: 48px;
+  font-size: 50px;
 }
 
 .score-display small {
   color: rgba(255, 255, 255, 0.55);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .result-grid {
@@ -1241,13 +1241,13 @@ a:focus-visible {
 
 .result-grid span {
   color: var(--ink-soft);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .result-grid strong {
   margin-top: 5px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .ending-stamp {
@@ -1258,7 +1258,7 @@ a:focus-visible {
   border-radius: 6px;
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1277,14 +1277,14 @@ a:focus-visible {
 .cloud-score-copy h2 {
   margin: 6px 0 7px;
   font-family: Georgia, serif;
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: -0.035em;
 }
 
 .cloud-score-copy p {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -1301,7 +1301,7 @@ a:focus-visible {
   background: var(--ink);
   color: white;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 760;
 }
 
@@ -1312,12 +1312,12 @@ a:focus-visible {
 
 .cloud-button span {
   color: var(--mustard);
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .cloud-message {
   margin: 10px 0 0;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .cloud-message.error {
@@ -1345,7 +1345,7 @@ a:focus-visible {
   padding: 10px 13px;
   background: var(--ink);
   color: white;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .leaderboard-heading span {
@@ -1364,7 +1364,7 @@ a:focus-visible {
 .rank {
   color: var(--orange);
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
 }
 
@@ -1374,18 +1374,18 @@ a:focus-visible {
 }
 
 .leaderboard-name strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .leaderboard-name small {
   margin-top: 1px;
   color: var(--ink-soft);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .leaderboard-score {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .result-actions {
@@ -1404,7 +1404,7 @@ a:focus-visible {
   }
 
   .hero h1 {
-    font-size: clamp(52px, 7.5vw, 74px);
+    font-size: clamp(54px, 7.5vw, 76px);
   }
 
   .game-shell {
@@ -1499,11 +1499,11 @@ a:focus-visible {
   }
 
   .hero h1 {
-    font-size: clamp(48px, 15vw, 66px);
+    font-size: clamp(50px, 15vw, 68px);
   }
 
   .hero-lead {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .hero-actions {
@@ -1569,7 +1569,7 @@ a:focus-visible {
   .event-icon {
     width: 45px;
     height: 45px;
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .event-description {
