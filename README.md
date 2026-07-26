@@ -1,4 +1,28 @@
-# vinext-starter
+# Sống Sót Đến Cuối Tháng
+
+Mini game quản lý tài chính kéo dài 30 ngày. Mỗi lượt chơi được sinh riêng thay
+vì lấy lại một danh sách tình huống cố định.
+
+## Scenario generation
+
+- `lib/scenario-engine.ts`: rule engine có seed, phối 10 họ tình huống với chủ
+  thể, thời điểm, mức tiền và lựa chọn khác nhau.
+- `app/api/game/run/route.ts`: tạo bộ 30 ngày, tính SHA-256 fingerprint, tùy chọn
+  dùng OpenAI Responses API để viết lại lời kể và đăng ký lượt với Supabase.
+- `game_runs`: lưu toàn bộ lượt chơi; `game_run_scenarios` đặt unique constraint
+  theo nhân vật và fingerprint để một tình huống logic chính xác không được cấp
+  lại.
+- Nếu `OPENAI_API_KEY` không tồn tại hoặc AI tạm lỗi, rule engine vẫn trả kết
+  quả ngay. AI không được phép thay đổi số tiền hay effects.
+
+Các biến môi trường:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+OPENAI_API_KEY=                 # optional
+OPENAI_SCENARIO_MODEL=gpt-5.6  # optional
+```
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and

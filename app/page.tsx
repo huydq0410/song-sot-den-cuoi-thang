@@ -2,28 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase";
-
-type StatKey = "cash" | "savings" | "debt" | "health" | "morale";
-
-type Effects = Partial<Record<StatKey, number>>;
-
-type Choice = {
-  label: string;
-  hint: string;
-  effects: Effects;
-  result: string;
-};
-
-type GameEvent = {
-  id: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  choices: Choice[];
-};
+import {
+  generateScenarioDeck,
+  type Choice,
+  type Effects,
+  type GameEvent,
+  type ProfileId,
+  type ScenarioSource,
+  type StatKey,
+} from "../lib/scenario-engine";
 
 type Profile = {
-  id: string;
+  id: ProfileId;
   name: string;
   role: string;
   description: string;
@@ -37,6 +27,11 @@ type Profile = {
 
 type GameState = {
   profileId: string;
+  runId?: string;
+  seed?: string;
+  scenarios?: GameEvent[];
+  scenarioSource?: ScenarioSource;
+  persistedRun?: boolean;
   day: number;
   cash: number;
   savings: number;
@@ -59,6 +54,7 @@ type LeaderboardEntry = {
 };
 
 const STORAGE_KEY = "song-sot-cuoi-thang-v1";
+const PLAYER_KEY = "song-sot-player-id-v1";
 const TOTAL_DAYS = 30;
 
 const profiles: Profile[] = [
@@ -856,7 +852,7 @@ function StatBar({
 }
 
 export default function Home() {
-  const [selectedProfile, setSelectedProfile] = useState("office");
+  const [selectedProfile, setSelectedProfile] = useState<ProfileId>("office");
   const [game, setGame] = useState<GameState | null>(null);
   const [screen, setScreen] = useState<"intro" | "playing" | "result">("intro");
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
@@ -866,6 +862,8 @@ export default function Home() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [isStarting, setIsStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSavedGame = window.setTimeout(() => {
@@ -893,12 +891,82 @@ export default function Home() {
     [game?.profileId, selectedProfile],
   );
 
-  const currentEvent = game ? getEvent(game.day, game.profileId) : null;
+  const currentEvent = game
+    ? (game.scenarios?.[game.day - 1] ?? getEvent(game.day, game.profileId))
+    : null;
 
-  function startGame(profileId: string) {
+  async function startGame(profileId: ProfileId) {
+    if (isStarting) return;
     const profile = profiles.find((item) => item.id === profileId)!;
+    setIsStarting(true);
+    setStartError(null);
+
+    let playerId = window.localStorage.getItem(PLAYER_KEY);
+    if (!playerId) {
+      playerId = crypto.randomUUID();
+      window.localStorage.setItem(PLAYER_KEY, playerId);
+    }
+
+    let run: {
+      runId: string;
+      seed: string;
+      scenarios: GameEvent[];
+      source: ScenarioSource;
+      persisted: boolean;
+    };
+
+    try {
+      const response = await fetch("/api/game/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId, playerId }),
+      });
+      const payload = (await response.json()) as {
+        runId?: string;
+        seed?: string;
+        scenarios?: GameEvent[];
+        source?: ScenarioSource;
+        persisted?: boolean;
+        error?: string;
+      };
+
+      if (
+        !response.ok ||
+        !payload.runId ||
+        !payload.seed ||
+        payload.scenarios?.length !== TOTAL_DAYS
+      ) {
+        throw new Error(payload.error ?? "Không thể tạo lượt chơi.");
+      }
+
+      run = {
+        runId: payload.runId,
+        seed: payload.seed,
+        scenarios: payload.scenarios,
+        source: payload.source === "ai" ? "ai" : "rules",
+        persisted: payload.persisted === true,
+      };
+    } catch {
+      const seed = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+      run = {
+        runId: crypto.randomUUID(),
+        seed,
+        scenarios: generateScenarioDeck(profileId, seed),
+        source: "rules",
+        persisted: false,
+      };
+      setStartError(
+        "Kho chống trùng đang tạm mất kết nối; lượt này vẫn được sinh riêng trên thiết bị.",
+      );
+    }
+
     const newGame: GameState = {
       profileId: profile.id,
+      runId: run.runId,
+      seed: run.seed,
+      scenarios: run.scenarios,
+      scenarioSource: run.source,
+      persistedRun: run.persisted,
       day: 1,
       cash: profile.cash,
       savings: profile.savings,
@@ -911,6 +979,7 @@ export default function Home() {
     setGame(newGame);
     setLastResult(null);
     setScreen("playing");
+    setIsStarting(false);
   }
 
   function resumeGame() {
@@ -992,6 +1061,7 @@ export default function Home() {
     setLastResult(null);
     setCloudStatus("idle");
     setLeaderboard([]);
+    setStartError(null);
     setScreen("intro");
   }
 
@@ -1041,9 +1111,10 @@ export default function Home() {
               <button
                 className="primary-button"
                 type="button"
+                disabled={isStarting}
                 onClick={() => startGame(selectedProfile)}
               >
-                Bắt đầu tháng mới
+                {isStarting ? "Đang tạo tháng riêng…" : "Bắt đầu tháng mới"}
                 <span aria-hidden="true">→</span>
               </button>
               {savedGame && (
@@ -1052,6 +1123,11 @@ export default function Home() {
                 </button>
               )}
             </div>
+            {isStarting && (
+              <p className="run-generation-note" aria-live="polite">
+                Đang phối 30 tình huống và kiểm tra trùng lặp…
+              </p>
+            )}
             <div className="micro-proof">
               <div className="avatar-stack" aria-hidden="true">
                 <span>M</span>
@@ -1403,7 +1479,11 @@ export default function Home() {
               <i className="keyboard-key">B</i>
               Chọn điều phù hợp nhất với bạn
             </span>
-            <span>Tự động lưu tiến trình</span>
+            <span>
+              {game.persistedRun
+                ? `Lượt riêng · ${game.scenarioSource === "ai" ? "AI viết lời" : "Rule engine"} · đã chống trùng`
+                : startError ?? "Lượt riêng trên thiết bị"}
+            </span>
           </div>
         </section>
       </section>
